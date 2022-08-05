@@ -9,3 +9,141 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Super_admin {
+  id          String @id  @db.Uuid @default(uuid())
+  name        String      @db.VarChar(255)
+  surname     String      @db.VarChar(255)
+  login       String      @db.VarChar(255)
+  password    String      @db.Text
+
+  created_at  DateTime    @db.Date() @default(now())
+  updated_at  DateTime    @db.Date() @default(now())
+  deleted_at  DateTime    @db.Date()
+
+  admin       Admin[]
+
+  @@map("super_admin")
+}
+
+model Admin {
+  id              String  @id   @db.Uuid            @default(uuid())
+  name            String        @db.VarChar(255)
+  surname         String        @db.VarChar(255)
+  login           String        @db.VarChar(255)
+  password        String        @db.Text
+
+  created_at      DateTime      @db.Date()          @default(now())
+  updated_at      DateTime      @db.Date()          @default(now())
+  deleted_at      DateTime      @db.Date()
+
+  super_admin_id  String        @db.Uuid
+  super_admin     Super_admin   @relation(fields: [super_admin_id], references: [id])
+
+  teachers Teacher[]
+
+  @@map("admin")
+}
+
+model Teacher {
+  id            String  @id   @db.Uuid            @default(uuid())
+  name          String        @db.VarChar(255)
+  surname       String        @db.VarChar(255)
+  family_name   String        @db.VarChar(255)
+  login         String        @db.VarChar(255)
+  password      String        @db.VarChar(255)
+
+  created_at    DateTime      @db.Date()          @default(now())
+  updated_at    DateTime      @db.Date()          @default(now())
+  deleted_at    DateTime      @db.Date()
+
+  admin_id      String        @db.Uuid
+  admin         Admin         @relation(fields: [admin_id], references: [id])
+  groups        GroupTeacher[]
+
+  @@map("teacher")
+}
+
+model Group {
+  id            String    @id       @db.Uuid        @default(uuid())
+  name          String              @db.VarChar(1)
+
+  created_at    DateTime            @db.Date()      @default(now())
+  updated_at    DateTime            @db.Date()      @default(now())
+  deleted_at    DateTime            @db.Date()
+
+  teachers      GroupTeacher[]
+  students      Student[]
+  semesters     Semester[]
+}
+
+model GroupTeacher {
+  teacher_id          String      @db.Uuid
+  teachers    Teacher             @relation(fields: [teacher_id], references: [id])
+
+  group_id            String      @db.Uuid
+  groups      Group               @relation(fields: [group_id], references: [id])
+
+  assignedAt          DateTime    @default(now())
+  assignedBy          String?
+
+  @@id([teacher_id, group_id])
+}
+
+model Faculty {
+  id            String  @id         @db.Uuid            @default(uuid())
+  name          String              @db.VarChar(255)
+  
+  created_at    DateTime            @db.Date()          @default(now())
+  updated_at    DateTime            @db.Date()          @default(now())
+  deleted_at    DateTime            @db.Date()
+
+  students      Student[]
+
+  @@map("faculty")
+}
+
+model Student {
+  id                            String   @id        @db.Uuid            @default(uuid())
+  login                         String   @unique    @db.VarChar(255)
+  password                      String              @db.VarChar(255)
+
+  name                          String?             @db.VarChar(255)
+  surname                       String?             @db.VarChar(255)
+  family_name                   String?             @db.VarChar(255)
+  dateOfBirth                   DateTime?           @db.Date
+  gender                        String?             @db.VarChar(10)     @default("male")
+  phone_number                  String?             @db.VarChar(13)
+  email                         String?             @db.VarChar(255)
+  address                       String?             @db.VarChar(255)
+  nationality                   String?             @db.VarChar(255)    @default("Uzbek")
+  inn                           String?             @db.VarChar(255)
+  password_series_and_number    String?             @db.VarChar(255)
+  date_issued                   DateTime?           @db.Date
+  issued_by                     String?             @db.VarChar(255)
+  date_expired                  DateTime?           @db.Date
+
+  created_at                    DateTime            @db.Date()          @default(now())
+  updated_at                    DateTime            @db.Date()          @default(now())
+  deleted_at                    DateTime            @db.Date()
+
+  faculty_id                    String              @db.Uuid
+  faculty   Faculty                                 @relation(fields: [faculty_id], references: [id])
+
+  group_id                      String              @db.Uuid
+  group     Group                                   @relation(fields: [group_id], references: [id])
+
+  @@map("student")
+}
+
+model Semester {
+  id            String              @id @db.Uuid    @default(uuid())
+  name          String              @db.VarChar(3)
+
+  created_at    DateTime            @db.Date()      @default(now())
+  updated_at    DateTime            @db.Date()      @default(now())
+  deleted_at    DateTime            @db.Date()
+
+  group_id      String              @db.Uuid
+  group Group                       @relation(fields: [group_id], references: [id])
+}
