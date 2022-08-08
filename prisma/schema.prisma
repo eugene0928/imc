@@ -62,7 +62,11 @@ model Teacher {
 
   admin_id      String        @db.Uuid
   admin         Admin         @relation(fields: [admin_id], references: [id])
+  
   groups        GroupTeacher[]
+
+  subject_id    String        @db.Uuid
+  subject       Subject       @relation(fields: [subject_id], references: [id])
 
   @@map("teacher")
 }
@@ -163,6 +167,8 @@ model Subject {
   created_at    DateTime            @db.Date()                          @default(now())
   updated_at    DateTime            @updatedAt
   deleted_at    DateTime?           @db.Date()
+
+  teachers      Teacher[]
 
   @@map("subject")
 }
