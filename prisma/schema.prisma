@@ -18,7 +18,7 @@ model Super_admin {
   password    String      @db.Text
 
   created_at  DateTime    @db.Date() @default(now())
-  updated_at  DateTime    @db.Date() @default(now())
+  updated_at  DateTime    @updatedAt
   deleted_at  DateTime    @db.Date()
 
   admin       Admin[]
@@ -27,14 +27,14 @@ model Super_admin {
 }
 
 model Admin {
-  id              String  @id   @db.Uuid            @default(uuid())
+  id              String  @id   @db.Uuid                    @default(uuid())
   name            String        @db.VarChar(255)
   surname         String        @db.VarChar(255)
   login           String        @db.VarChar(255)
   password        String        @db.Text
 
-  created_at      DateTime      @db.Date()          @default(now())
-  updated_at      DateTime      @db.Date()          @default(now())
+  created_at      DateTime      @db.Date()                  @default(now())
+  updated_at      DateTime      @updatedAt
   deleted_at      DateTime      @db.Date()
 
   super_admin_id  String        @db.Uuid
@@ -46,15 +46,15 @@ model Admin {
 }
 
 model Teacher {
-  id            String  @id   @db.Uuid            @default(uuid())
+  id            String  @id   @db.Uuid                      @default(uuid())
   name          String        @db.VarChar(255)
   surname       String        @db.VarChar(255)
   family_name   String        @db.VarChar(255)
   login         String        @db.VarChar(255)
   password      String        @db.VarChar(255)
 
-  created_at    DateTime      @db.Date()          @default(now())
-  updated_at    DateTime      @db.Date()          @default(now())
+  created_at    DateTime      @db.Date()                    @default(now())
+  updated_at    DateTime      @updatedAt
   deleted_at    DateTime      @db.Date()
 
   admin_id      String        @db.Uuid
@@ -65,11 +65,11 @@ model Teacher {
 }
 
 model Group {
-  id            String    @id       @db.Uuid        @default(uuid())
+  id            String    @id       @db.Uuid                @default(uuid())
   name          String              @db.VarChar(1)
 
-  created_at    DateTime            @db.Date()      @default(now())
-  updated_at    DateTime            @db.Date()      @default(now())
+  created_at    DateTime            @db.Date()              @default(now())
+  updated_at    DateTime            @updatedAt
   deleted_at    DateTime            @db.Date()
 
   teachers      GroupTeacher[]
@@ -84,18 +84,18 @@ model GroupTeacher {
   group_id            String      @db.Uuid
   groups      Group               @relation(fields: [group_id], references: [id])
 
-  assignedAt          DateTime    @default(now())
+  assignedAt          DateTime                                @default(now())
   assignedBy          String?
 
   @@id([teacher_id, group_id])
 }
 
 model Faculty {
-  id            String  @id         @db.Uuid            @default(uuid())
+  id            String  @id         @db.Uuid                  @default(uuid())
   name          String              @db.VarChar(255)
   
-  created_at    DateTime            @db.Date()          @default(now())
-  updated_at    DateTime            @db.Date()          @default(now())
+  created_at    DateTime            @db.Date()                @default(now())
+  updated_at    DateTime            @updatedAt
   deleted_at    DateTime            @db.Date()
 
   students      Student[]
@@ -107,6 +107,7 @@ model Student {
   id                            String   @id        @db.Uuid            @default(uuid())
   login                         String   @unique    @db.VarChar(255)
   password                      String              @db.VarChar(255)
+  is_completed                  Boolean             @default(false)
 
   name                          String?             @db.VarChar(255)
   surname                       String?             @db.VarChar(255)
@@ -124,7 +125,7 @@ model Student {
   date_expired                  DateTime?           @db.Date
 
   created_at                    DateTime            @db.Date()          @default(now())
-  updated_at                    DateTime            @db.Date()          @default(now())
+  updated_at                    DateTime            @updatedAt
   deleted_at                    DateTime            @db.Date()
 
   faculty_id                    String              @db.Uuid
@@ -133,6 +134,7 @@ model Student {
   group_id                      String              @db.Uuid
   group     Group                                   @relation(fields: [group_id], references: [id])
 
+  mark      Mark?
   @@map("student")
 }
 
@@ -141,9 +143,40 @@ model Semester {
   name          String              @db.VarChar(3)
 
   created_at    DateTime            @db.Date()      @default(now())
-  updated_at    DateTime            @db.Date()      @default(now())
-  deleted_at    DateTime            @db.Date()
+  updated_at    DateTime            @updatedAt
+  deleted_at    DateTime?           @db.Date()
 
   group_id      String              @db.Uuid
-  group Group                       @relation(fields: [group_id], references: [id])
+  group         Group               @relation(fields: [group_id], references: [id])
+
+  mark          Mark?
+  @@map("semester")
+}
+
+model Subject {
+  id            String              @id              @db.Uuid           @default(uuid())
+  name          String                               @db.VarChar(255)
+
+  created_at    DateTime            @db.Date()                          @default(now())
+  updated_at    DateTime            @updatedAt
+  deleted_at    DateTime?           @db.Date()
+
+  @@map("subject")
+}
+
+model Mark {
+  id            String              @id              @db.Uuid            @default(uuid())
+  mid_term      String?                              @db.VarChar(1)
+  final_term    String?                              @db.VarChar(1)
+  total         String?                              @db.VarChar(1)
+
+  created_at    DateTime                             @db.Date()          @default(now())
+  updated_at    DateTime                             @updatedAt
+  deleted_at    DateTime?                            @db.Date()
+
+  student_id    String              @unique          @db.Uuid 
+  student       Student                              @relation(fields: [student_id], references: [id])
+
+  semester_id   String              @unique          @db.Uuid
+  semester      Semester                             @relation(fields: [semester_id], references: [id])
 }
