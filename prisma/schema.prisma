@@ -20,7 +20,7 @@ model Super_admin {
 
   created_at  DateTime    @db.Date() @default(now())
   updated_at  DateTime    @updatedAt
-  deleted_at  DateTime    @db.Date()
+  deleted_at  DateTime?   @db.Date()
 
   admin       Admin[]
 
@@ -28,19 +28,22 @@ model Super_admin {
 }
 
 model Admin {
-  id              String  @id   @db.Uuid                    @default(uuid())
-  name            String        @db.VarChar(255)
-  surname         String        @db.VarChar(255)
-  login           String        @db.VarChar(255)
-  password        String        @db.Text
-  image           String        @db.Text
+  id              String  @id          @db.Uuid                    @default(uuid())
+  name            String               @db.VarChar(255)
+  surname         String               @db.VarChar(255)
+  login           String               @db.VarChar(255)
+  password        String               @db.Text
+  image           String               @db.Text
+  gender          String?              @db.VarChar(6)              @default("male")
+  phone_number    String               @db.VarChar(12)   
+  email           String  @unique      @db.VarChar(255)
 
-  created_at      DateTime      @db.Date()                  @default(now())
-  updated_at      DateTime      @updatedAt
-  deleted_at      DateTime      @db.Date()
+  created_at      DateTime             @db.Date()                  @default(now())
+  updated_at      DateTime             @updatedAt
+  deleted_at      DateTime?            @db.Date()
 
-  super_admin_id  String        @db.Uuid
-  super_admin     Super_admin   @relation(fields: [super_admin_id], references: [id])
+  super_admin_id  String               @db.Uuid
+  super_admin     Super_admin          @relation(fields: [super_admin_id], references: [id])
 
   teachers Teacher[]
 
@@ -48,25 +51,29 @@ model Admin {
 }
 
 model Teacher {
-  id            String  @id   @db.Uuid                      @default(uuid())
-  name          String        @db.VarChar(255)
-  surname       String        @db.VarChar(255)
-  family_name   String        @db.VarChar(255)
-  login         String        @db.VarChar(255)
-  password      String        @db.VarChar(255)
-  image         String        @db.Text
+  id            String  @id          @db.Uuid                      @default(uuid())
+  name          String               @db.VarChar(255)
+  surname       String               @db.VarChar(255)
+  family_name   String               @db.VarChar(255)
+  login         String               @db.VarChar(255)
+  password      String               @db.VarChar(255)
+  image         String               @db.Text
+  gender        String?              @db.VarChar(6)                @default("male")
+  phone_number  String               @db.VarChar(12)   
+  email         String  @unique      @db.VarChar(255)
+  date_of_birth DateTime             @db.Date
 
-  created_at    DateTime      @db.Date()                    @default(now())
-  updated_at    DateTime      @updatedAt
-  deleted_at    DateTime      @db.Date()
+  created_at    DateTime             @db.Date()                    @default(now())
+  updated_at    DateTime             @updatedAt
+  deleted_at    DateTime?            @db.Date()
 
-  admin_id      String        @db.Uuid
-  admin         Admin         @relation(fields: [admin_id], references: [id])
+  admin_id      String               @db.Uuid
+  admin         Admin                @relation(fields: [admin_id], references: [id])
   
   groups        GroupTeacher[]
 
-  subject_id    String        @db.Uuid
-  subject       Subject       @relation(fields: [subject_id], references: [id])
+  subject_id    String               @db.Uuid
+  subject       Subject              @relation(fields: [subject_id], references: [id])
 
   @@map("teacher")
 }
@@ -77,7 +84,7 @@ model Group {
 
   created_at    DateTime            @db.Date()              @default(now())
   updated_at    DateTime            @updatedAt
-  deleted_at    DateTime            @db.Date()
+  deleted_at    DateTime?           @db.Date()
 
   teachers      GroupTeacher[]
   students      Student[]
@@ -103,7 +110,7 @@ model Faculty {
   
   created_at    DateTime            @db.Date()                @default(now())
   updated_at    DateTime            @updatedAt
-  deleted_at    DateTime            @db.Date()
+  deleted_at    DateTime?           @db.Date()
 
   students      Student[]
 
@@ -122,7 +129,7 @@ model Student {
   dateOfBirth                   DateTime?           @db.Date
   gender                        String?             @db.VarChar(10)     @default("male")
   phone_number                  String?             @db.VarChar(13)
-  email                         String?             @db.VarChar(255)
+  email                         String?  @unique    @db.VarChar(255)
   address                       String?             @db.VarChar(255)
   nationality                   String?             @db.VarChar(255)    @default("Uzbek")
   inn                           String?             @db.VarChar(255)
@@ -133,7 +140,7 @@ model Student {
 
   created_at                    DateTime            @db.Date()          @default(now())
   updated_at                    DateTime            @updatedAt
-  deleted_at                    DateTime            @db.Date()
+  deleted_at                    DateTime?           @db.Date()
 
   faculty_id                    String              @db.Uuid
   faculty   Faculty                                 @relation(fields: [faculty_id], references: [id])
