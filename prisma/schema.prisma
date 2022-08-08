@@ -16,6 +16,7 @@ model Super_admin {
   surname     String      @db.VarChar(255)
   login       String      @db.VarChar(255)
   password    String      @db.Text
+  image       String      @db.Text
 
   created_at  DateTime    @db.Date() @default(now())
   updated_at  DateTime    @updatedAt
@@ -32,6 +33,7 @@ model Admin {
   surname         String        @db.VarChar(255)
   login           String        @db.VarChar(255)
   password        String        @db.Text
+  image           String        @db.Text
 
   created_at      DateTime      @db.Date()                  @default(now())
   updated_at      DateTime      @updatedAt
@@ -52,6 +54,7 @@ model Teacher {
   family_name   String        @db.VarChar(255)
   login         String        @db.VarChar(255)
   password      String        @db.VarChar(255)
+  image         String        @db.Text
 
   created_at    DateTime      @db.Date()                    @default(now())
   updated_at    DateTime      @updatedAt
@@ -108,10 +111,10 @@ model Student {
   login                         String   @unique    @db.VarChar(255)
   password                      String              @db.VarChar(255)
   is_completed                  Boolean             @default(false)
+  image                         String              @db.Text
 
   name                          String?             @db.VarChar(255)
   surname                       String?             @db.VarChar(255)
-  family_name                   String?             @db.VarChar(255)
   dateOfBirth                   DateTime?           @db.Date
   gender                        String?             @db.VarChar(10)     @default("male")
   phone_number                  String?             @db.VarChar(13)
