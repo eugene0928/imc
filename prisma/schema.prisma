@@ -126,7 +126,7 @@ model Student {
 
   name                          String?             @db.VarChar(255)
   surname                       String?             @db.VarChar(255)
-  dateOfBirth                   DateTime?           @db.Date
+  date_of_birth                 DateTime?           @db.Date
   gender                        String?             @db.VarChar(10)     @default("male")
   phone_number                  String?             @db.VarChar(13)
   email                         String?  @unique    @db.VarChar(255)
@@ -163,7 +163,7 @@ model Semester {
   group_id      String              @db.Uuid
   group         Group               @relation(fields: [group_id], references: [id])
 
-  mark          Mark?
+  marks          Mark[]
   @@map("semester")
 }
 
@@ -176,6 +176,8 @@ model Subject {
   deleted_at    DateTime?           @db.Date()
 
   teachers      Teacher[]
+
+  marks         Mark[]
 
   @@map("subject")
 }
@@ -193,6 +195,9 @@ model Mark {
   student_id    String              @unique          @db.Uuid 
   student       Student                              @relation(fields: [student_id], references: [id])
 
-  semester_id   String              @unique          @db.Uuid
+  semester_id   String                               @db.Uuid
   semester      Semester                             @relation(fields: [semester_id], references: [id])
+
+  subject_id    String                               @db.Uuid
+  subject       Subject                              @relation(fields: [subject_id], references: [id])
 }
