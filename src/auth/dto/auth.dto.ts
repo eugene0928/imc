@@ -7,3 +7,9 @@ export class AuthDto {
     @IsNotEmpty()
     password: string
 }
+
+export class Token {
+    id: string
+    name: string
+    status: string
+}
