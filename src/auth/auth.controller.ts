@@ -6,7 +6,7 @@ import { AuthDto } from './dto';
 export class AuthController {
     constructor(private authService: AuthService) {}
 
-    @Post("login/super_admin")
+    @Post("login/super-admin")
     @HttpCode(200)
     loginSuperAdmin(@Body() dto: AuthDto) {
         return this.authService.loginSuperAdmin(dto)
