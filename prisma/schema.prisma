@@ -32,10 +32,10 @@ model Admin {
   name            String               @db.VarChar(255)
   surname         String               @db.VarChar(255)
   login           String               @db.VarChar(255)
-  password        String               @db.Text
+  password        String  @unique      @db.Text
   image           String               @db.Text
   gender          String?              @db.VarChar(6)              @default("male")
-  phone_number    String               @db.VarChar(12)   
+  phone_number    String  @unique      @db.VarChar(12)   
   email           String  @unique      @db.VarChar(255)
 
   created_at      DateTime             @db.Date()                  @default(now())
@@ -56,10 +56,10 @@ model Teacher {
   surname       String               @db.VarChar(255)
   family_name   String               @db.VarChar(255)
   login         String               @db.VarChar(255)
-  password      String               @db.VarChar(255)
+  password      String  @unique      @db.VarChar(255)
   image         String               @db.Text
   gender        String?              @db.VarChar(6)                @default("male")
-  phone_number  String               @db.VarChar(12)   
+  phone_number  String  @unique      @db.VarChar(12)   
   email         String  @unique      @db.VarChar(255)
   date_of_birth DateTime             @db.Date
 
@@ -128,12 +128,12 @@ model Student {
   surname                       String?             @db.VarChar(255)
   date_of_birth                 DateTime?           @db.Date
   gender                        String?             @db.VarChar(10)     @default("male")
-  phone_number                  String?             @db.VarChar(13)
+  phone_number                  String?  @unique    @db.VarChar(13)
   email                         String?  @unique    @db.VarChar(255)
   address                       String?             @db.VarChar(255)
   nationality                   String?             @db.VarChar(255)    @default("Uzbek")
   inn                           String?             @db.VarChar(255)
-  password_series_and_number    String?             @db.VarChar(255)
+  password_series_and_number    String?  @unique    @db.VarChar(255)
   date_issued                   DateTime?           @db.Date
   issued_by                     String?             @db.VarChar(255)
   date_expired                  DateTime?           @db.Date
