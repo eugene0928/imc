@@ -46,6 +46,9 @@ model Admin {
   super_admin     Super_admin          @relation(fields: [super_admin_id], references: [id])
 
   teachers Teacher[]
+  subjects Subject[]
+  semesters Semester[]
+  faculties Faculty[]
 
   @@map("admin")
 }
@@ -112,6 +115,9 @@ model Faculty {
   updated_at    DateTime            @updatedAt
   deleted_at    DateTime?           @db.Date()
 
+  admin_id      String              @db.Uuid
+  admin         Admin               @relation(fields: [admin_id], references: [id])
+
   students      Student[]
 
   @@map("faculty")
@@ -160,6 +166,9 @@ model Semester {
   updated_at    DateTime            @updatedAt
   deleted_at    DateTime?           @db.Date()
 
+  admin_id      String              @db.Uuid
+  admin         Admin               @relation(fields: [admin_id], references: [id])
+
   group_id      String              @db.Uuid
   group         Group               @relation(fields: [group_id], references: [id])
 
@@ -174,6 +183,9 @@ model Subject {
   created_at    DateTime            @db.Date()                          @default(now())
   updated_at    DateTime            @updatedAt
   deleted_at    DateTime?           @db.Date()
+
+  admin_id      String              @db.Uuid
+  admin         Admin               @relation(fields: [admin_id], references: [id])
 
   teachers      Teacher[]
 
