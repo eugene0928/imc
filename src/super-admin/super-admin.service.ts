@@ -126,7 +126,7 @@ export class SuperAdminService {
         }
     }
 
-    async getAdmins(): Promise<{ status: number, message: string, data: {}[] }> {
+    async getAdmins(): Promise<{ status: number, message: string, data: any[] | null }> {
         const admins = await this.prisma.admin.findMany({ where: { deleted_at: null },
             select: {
                 id: true,
@@ -142,6 +142,9 @@ export class SuperAdminService {
             }
         })
 
+        if(!admins.length) {
+            return { status: 200, message: "No admins available", data: null }
+        }
         return { status: 200, message: "Available admins", data: admins }
     }
 }
