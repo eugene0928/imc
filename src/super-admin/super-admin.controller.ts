@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseUUIDPipe, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from "express";
-import { AdminDto } from 'src/auth/dto';
+import { AdminDto, EditAdminDto } from './dto';
 import { SuperJwtGuard } from 'src/auth/guard';
 import { SuperAdminService } from './super-admin.service';
 
@@ -22,5 +22,23 @@ export class SuperAdminController {
     }))
     async addAdmin(@Body() dto: AdminDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
         return this.superService.addAdmin(dto, file, req.user)
+    }
+
+    @Patch("edit-admin")
+    @UseGuards(SuperJwtGuard)
+    async editAdmin(@Query("id", ParseUUIDPipe) id: string, @Body() dto: EditAdminDto, @Req() req: Request){
+        return this.superService.editAdmin(dto, id, req.user)
+    }
+
+    @Delete("delete-admin")
+    @UseGuards(SuperJwtGuard)
+    async deleteAdmin(@Query("id", ParseUUIDPipe) id: string) {
+        return this.superService.deleteAdmin(id)
+    }
+
+    @Get("admins")
+    @UseGuards(SuperJwtGuard)
+    async getAdmins() {
+        return this.superService.getAdmins()
     }
 }
