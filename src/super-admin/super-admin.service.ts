@@ -39,7 +39,7 @@ export class SuperAdminService {
                 }
             })
             // return response
-            return { status: 201, message: "Successfully created new admin", data: newAdmin.login }
+            return { status: 201, message: "Successfully created a new admin", data: newAdmin.login }
         } catch (error) {
             unlinkSync(join(process.cwd(), "uploads", file.filename))
             if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
