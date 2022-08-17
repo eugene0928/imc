@@ -9,7 +9,7 @@ import * as argon from "argon2";
 export class AuthService {
     constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService) {}
 
-    async loginSuperAdmin(dto: AuthDto): Promise<{ status: number, message: string, token: string }> {
+    async loginSuperAdmin(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get super_admin from db
         const super_admin = await this.prisma.super_admin.findFirst({ where: { login: dto.login } })
         // check if exists
@@ -39,10 +39,10 @@ export class AuthService {
             })
         }
 
-        return { status: 200, message: "Successfully logged in", token: await this.singToken(super_admin.id, super_admin.name, "super_admin") }
+        return { status: 200, error: false, message: "Successfully logged in", token: await this.singToken(super_admin.id, super_admin.name, "super_admin") }
     }
 
-    async loginAdmin(dto: AuthDto): Promise<{ status: number, message: string, token: string }> {
+    async loginAdmin(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get admin from db
         const admin = await this.prisma.admin.findFirst({ where: { login: dto.login } })
         // check if exists
@@ -71,10 +71,10 @@ export class AuthService {
             })
         }
 
-        return { status: 200, message: "Successfully logged in", token: await this.singToken(admin.id, admin.name, "admin") }
+        return { status: 200, error: false, message: "Successfully logged in", token: await this.singToken(admin.id, admin.name, "admin") }
     }
 
-    async loginTeacher(dto: AuthDto): Promise<{ status: number, message: string, token: string }> {
+    async loginTeacher(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get teacher from db
         const teacher = await this.prisma.teacher.findFirst({ where: { login: dto.login } })
         // check if exists
@@ -103,10 +103,10 @@ export class AuthService {
             })
         }
 
-        return { status: 200, message: "Successfully logged in", token: await this.singToken(teacher.id, teacher.name, "teacher") }
+        return { status: 200, error: false, message: "Successfully logged in", token: await this.singToken(teacher.id, teacher.name, "teacher") }
     }
 
-    async loginStudent(dto: AuthDto): Promise<{ status: number, message: string, token: string }> {
+    async loginStudent(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get teacher from db
         const student = await this.prisma.student.findFirst({ where: { login: dto.login } })
         // check if exists
@@ -135,7 +135,7 @@ export class AuthService {
             })
         }
 
-        return { status: 200, message: "Successfully logged in", token: await this.singToken(student.id, student.name, "student") }
+        return { status: 200, error: false, message: "Successfully logged in", token: await this.singToken(student.id, student.name, "student") }
     }
 
     singToken(id: string, name: string, status: string ): Promise<string> {
