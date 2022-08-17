@@ -11,7 +11,7 @@ import { Admin } from '@prisma/client';
 export class SuperAdminService {
     constructor(private prisma: PrismaService) {}
 
-    async addAdmin(dto: AdminDto, file, super_admin: any): Promise<{ status: number, message: string, data: string }> {
+    async addAdmin(dto: AdminDto, file, super_admin: any): Promise<{ status: number, error: boolean, message: string, data: string }> {
         try {
             // check file mimetype
             if(!file.mimetype.includes("image/")) {
@@ -46,7 +46,7 @@ export class SuperAdminService {
                 }
             })
             // return response
-            return { status: 201, message: "Successfully created a new admin", data: newAdmin.login }
+            return { status: 201, error: false, message: "Successfully created a new admin", data: newAdmin.login }
         } catch (error) {
             unlinkSync(join(process.cwd(), "uploads", file.filename))
             if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
@@ -60,7 +60,7 @@ export class SuperAdminService {
         }
     }
 
-    async editAdmin(dto: EditAdminDto, id: string, super_admin: any): Promise<{ status: number, message: string, data: string }> {
+    async editAdmin(dto: EditAdminDto, id: string, super_admin: any): Promise<{ status: number, error: boolean, message: string, data: string }> {
         try {
             // get admin from db
             const admin = await this.prisma.admin.findFirst({ where: { id, deleted_at: null } })
@@ -87,7 +87,7 @@ export class SuperAdminService {
                 },
             })
 
-            return { status: 200, message: "Credentials are updated successfully", data: updatedAdmin.login }
+            return { status: 200, error: false, message: "Credentials are updated successfully", data: updatedAdmin.login }
         } catch (error) {
             // for invalid uuid
             if(error instanceof PrismaClientKnownRequestError && error.code == "P2023") {
@@ -109,7 +109,7 @@ export class SuperAdminService {
         }
     }
 
-    async deleteAdmin(id: string): Promise<{ status: number, message: string }> {
+    async deleteAdmin(id: string): Promise<{ status: number, error: boolean, message: string, data: null }> {
         try {
             // get admin from db
             const admin = await this.prisma.admin.findFirst({ where: { id, deleted_at: null } })
@@ -127,13 +127,13 @@ export class SuperAdminService {
                 data: { deleted_at: new Date() }
             })
             // return response
-            return { status: 200, message: "Resource deleted successfully" }
+            return { status: 200, error: false, message: "Resource deleted successfully", data: null }
         } catch (error) {
             throw error
         }
     }
 
-    async getAdmins(): Promise<{ status: number, message: string, data: any[] | null }> {
+    async getAdmins(): Promise<{ status: number, error: boolean, message: string, data: any[] | null }> {
         const admins = await this.prisma.admin.findMany({ where: { deleted_at: null },
             select: {
                 id: true,
@@ -150,8 +150,8 @@ export class SuperAdminService {
         })
 
         if(!admins.length) {
-            return { status: 200, message: "No admins available", data: null }
+            return { status: 200, error: false, message: "No admins available", data: null }
         }
-        return { status: 200, message: "Available admins", data: admins }
+        return { status: 200, error: false, message: "Available admins", data: admins }
     }
 }
