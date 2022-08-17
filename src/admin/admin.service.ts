@@ -1,10 +1,10 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Teacher } from '@prisma/client';
+import { GroupTeacher, Teacher } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { newTeacherDto } from './dto';
+import { editTeacherDto, editTeacherGroupDto, newTeacherDto } from './dto';
 import * as argon from "argon2";
 
 @Injectable()
@@ -95,8 +95,90 @@ export class AdminService {
         }
     }
 
-    editTeacher() {
+    async editTeacher(id: string, dto: editTeacherDto, admin: any): Promise<{ status: number, error: boolean, message: string, data: Teacher }> {
+        try {   
+            // get teacher from db
+            const teacher = await this.prisma.teacher.findFirst({ where: { id, deleted_at: null } })
+            // check if exists
+            if(!teacher) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: "Such teacher is not fount"
+                })
+            }
+            // check if dto is empty
+            if(!(Object.keys(dto).length)) {
+                delete teacher.password
+                return { status: 200, error: false, message: "Nothing is updated", data: teacher }
+            }
+            // update db 
+            const updatedTeacher = await this.prisma.teacher.update({ 
+                where: { id },
+                data: {
+                    ...dto,
+                    admin_id: admin.id
+                }
+            })
+            // delete password
+            delete updatedTeacher.password
+            // return response
+            return { status: 200, error: false, message: "Teacher's credentials are successfully updated", data: updatedTeacher }
+        } catch (error) {
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2023") {
+                throw new BadRequestException({
+                    status: 400, error: true, message: error.message
+                })
+            }
 
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400, error: true, message: error.message
+                })
+            }
+            throw error
+        }
+    }
+
+    async editTeacherGroups(id: string, group_id: string, dto: editTeacherGroupDto): Promise<{ status: number, error: boolean, message: string, data: GroupTeacher }> {
+        try {
+            // get teacher from groupteacher table
+            const teacherGroups = await this.prisma.groupTeacher.findFirst({ where: { teacher_id: id, group_id } })
+            // check if record is exists
+            if(!teacherGroups) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "Such teacher is not fount or the teacher does not have such group"
+                })
+            }
+            // check if dto is exists
+            if(Object.keys(dto).length == 0) {
+                return { status: 200, error: false, message: "Nothing is updated", data: teacherGroups }
+            }
+            // udpate db
+            const updatedTeacherGroups = await this.prisma.groupTeacher.update({
+                where: { teacher_id_group_id: { group_id, teacher_id: id } },
+                data: {
+                    ...dto
+                }
+            })
+            // return response
+            return { status: 200, error: false, message: "Teacher's group is successfully updated", data: updatedTeacherGroups }
+        } catch (error) {
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2023") {
+                throw new BadRequestException({
+                    status: 400, error: true, message: error.message
+                })
+            }
+
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400, error: true, message: error.message
+                })
+            }
+            throw error
+        }
     }
 
     deleteTeacher() {

@@ -45,6 +45,55 @@ export class newTeacherDto {
     subject_id: string
 }
 
+export class editTeacherDto {
+    @IsOptional()
+    @Length(3, 255)
+    @Matches(/^[A-Za-z]+$/)
+    name?: string
+
+    @IsOptional()
+    @Length(3, 255)
+    @Matches(/^[A-Za-z]+$/)
+    surname?: string
+
+    @IsOptional()
+    @Length(3, 255)
+    @Matches(/^[A-Za-z]+$/)
+    family_name?: string
+
+    @IsOptional()
+    @Length(3, 255)
+    login?: string
+
+    @IsOptional()
+    @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{9,}$/)
+    password?: string
+
+    @IsOptional()
+    gender?: string
+
+    @IsOptional()
+    @IsPhoneNumber("UZ")
+    phone_number?: string
+
+    @IsOptional()
+    @IsEmail()
+    email?: string
+
+    @IsOptional()
+    @IsISO8601()
+    date_of_birth?: string
+
+    @IsOptional()
+    @IsUUID()
+    subject_id?: string
+}
+
+export class editTeacherGroupDto {
+    @IsOptional()
+    @IsUUID()
+    group_id: string
+}
 
 // export class groupDto {
 //     groups: {teacher_id: string, group_id: string} | {teacher_id: string, group_id: string}[]
