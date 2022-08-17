@@ -21,7 +21,14 @@ export class SuperAdminService {
                     message: "Invalid file mimetype. Only images will be accepted(file size should be no more than 5mb)"
                 })
             }
-
+            // check file size
+            if(file.size > 5 * 1024 * 1024) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "File size should be no more than 5mb"
+                })
+            }
             //hash the original password
             const hashedPassw = await argon.hash(dto.password)
             // insert data into db
