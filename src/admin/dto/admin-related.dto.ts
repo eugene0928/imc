@@ -101,6 +101,87 @@ export class FacultyDto {
     name: string
 }
 
+export class StudentDto {
+    @IsNotEmpty()
+    login: string
+
+    @IsNotEmpty()
+    @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{9,}$/)
+    password: string
+
+    @IsNotEmpty()
+    @IsUUID()
+    faculty_id: string
+
+    @IsNotEmpty()
+    @IsUUID()
+    group_id: string
+
+    file: File
+}
+
+export class EditStudentDto {
+    @IsOptional()
+    login?: string
+
+    @IsOptional()
+    password?: string
+
+    @IsOptional()
+    @Matches(/^[A-Za-z]+$/)
+    name?: string
+
+    @IsOptional()
+    @Matches(/^[A-Za-z]+$/)
+    surname?: string
+
+    @IsOptional()
+    @IsISO8601()
+    date_of_birth?: string
+
+    @IsOptional()
+    @Matches(/^(male)$|^(female)$/)
+    gender?: string
+
+    @IsOptional()
+    @IsPhoneNumber("UZ")
+    phone_number?: string
+
+    @IsOptional()
+    @IsEmail()
+    email?: string
+
+    @IsOptional()
+    address?: string
+
+    @IsOptional()
+    nationality?: string
+    
+    @IsOptional()
+    inn?: string
+
+    @IsOptional()
+    password_series_and_number?: string
+
+    @IsOptional()
+    @IsISO8601()
+    date_issued?: string
+
+    @IsOptional()
+    issued_by?: string
+
+    @IsOptional()
+    @IsISO8601()
+    date_expired?: string
+
+    @IsOptional()
+    @IsUUID()
+    faculty_id?: string
+
+    @IsOptional()
+    @IsUUID()
+    group_id?: string
+}
 // export class groupDto {
 //     groups: {teacher_id: string, group_id: string} | {teacher_id: string, group_id: string}[]
 // }
