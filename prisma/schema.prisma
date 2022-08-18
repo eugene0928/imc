@@ -102,14 +102,14 @@ model GroupTeacher {
   groups      Group               @relation(fields: [group_id], references: [id])
 
   assignedAt          DateTime                                @default(now())
-  assignedBy          String?
+  deleted_at          DateTime?   @db.Date() 
 
   @@id([teacher_id, group_id])
 }
 
 model Faculty {
   id            String  @id         @db.Uuid                  @default(uuid())
-  name          String              @db.VarChar(255)
+  name          String  @unique     @db.VarChar(255)
   
   created_at    DateTime            @db.Date()                @default(now())
   updated_at    DateTime            @updatedAt
