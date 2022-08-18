@@ -4,7 +4,7 @@ import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@pri
 import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto } from './dto';
 import * as argon from "argon2";
 
 @Injectable()
@@ -295,12 +295,92 @@ export class AdminService {
         }
     }
 
-    addStudent() {
+    async addStudent(dto: StudentDto, file: Express.Multer.File): Promise<{ status: number, error: boolean, message: string, data: string }> {
+        try {
+            // check file mimetype
+            if(!(file.mimetype.includes("image/"))) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "Only images will be accepted(no more than 5mb)"
+                })
+            }
+            // check file size
+            if(file.size > 5 * 1024 * 1024) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "File size is too much. Only files which are no more than 5mb will be accepted"
+                })
+            }
+            // hash original password
+            dto.password = await argon.hash(dto.password)
+            // create student in db
+            const newStudent = await this.prisma.student.create({
+                data: {
+                    login: dto.login,
+                    password: dto.password,
+                    image: file.filename,
+                    faculty_id: dto.faculty_id,
+                    group_id: dto.group_id
+                }
+            })
+            // return response
+            return { status: 201, error: false, message: "New student is added successfully", data: newStudent.login }
+        } catch (error) {
+            unlinkSync(join(process.cwd(), "uploads", file.filename))
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
+                throw new BadRequestException({ 
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
 
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2003") {
+                throw new BadRequestException({ 
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
+            throw error
+        }
     }
 
-    editStudent() {
-
+    async editStudent(id: string, dto: EditStudentDto) {
+        try {
+            // if password exists in dto, hash it
+            if(dto.password) {
+                dto.password = await argon.hash(dto.password)
+            }
+            // update student's credentials
+            const student = await this.prisma.student.update({ 
+                where: { id },
+                data: {
+                    ...dto,
+                }
+             })
+            // return response
+            return { status: 200, error: false, message: "Student's credentials are updated successfully", data: student.login }
+        } catch (error) {
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
+            
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2025") {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
+            throw error
+        }
     }
 
     deleteStudent() {

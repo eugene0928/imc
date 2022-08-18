@@ -3,7 +3,7 @@ import { AdminJwtGuard } from 'src/auth/guard';
 import { Request } from "express";
 import { AdminService } from './admin.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto } from './dto';
 
 @Controller('admin')
 export class AdminController {
@@ -68,15 +68,17 @@ export class AdminController {
 
     @Post("add-student")
     @UseGuards(AdminJwtGuard)
-    async addStudent(@Body() dto) {
-        console.log(dto)
-        return this.adminService.addStudent()
+    @UseInterceptors(FileInterceptor("file", {
+        dest: "uploads/",
+    }))
+    addStudent(@Body() dto: StudentDto, @UploadedFile() file: Express.Multer.File) {
+        return this.adminService.addStudent(dto, file)
     }
 
-    @Patch()
+    @Patch("edit-student")
     @UseGuards(AdminJwtGuard)
-    async editStudent() {
-        return this.adminService.editStudent()
+    async editStudent(@Query("id", ParseUUIDPipe) id: string, @Body() dto: EditStudentDto) {
+        return this.adminService.editStudent(id, dto)
     }
 
     @Delete()
