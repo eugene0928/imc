@@ -95,6 +95,12 @@ export class editTeacherGroupDto {
     group_id: string
 }
 
+export class FacultyDto {
+    @IsNotEmpty()
+    @Matches(/^[A-Za-z]+$/)
+    name: string
+}
+
 // export class groupDto {
 //     groups: {teacher_id: string, group_id: string} | {teacher_id: string, group_id: string}[]
 // }
