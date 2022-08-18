@@ -383,7 +383,27 @@ export class AdminService {
         }
     }
 
-    deleteStudent() {
-
+    async deleteStudent(id: string): Promise<{ status: number, error: boolean, message: string, data: null }> {
+        try {
+            // get student from db
+            const student = await this.prisma.student.findFirst({ where: { id, deleted_at: null } })
+            // check if exists
+            if(!student) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: "The student is not fount"
+                })
+            }
+            // soft delete from db
+            await this.prisma.student.update({ 
+                where: { id },
+                data: { deleted_at: new Date() }
+             })
+            // return response
+            return { status: 200, error: false, message: "Resourse is deleted successfully", data: null }
+        } catch (error) {
+            throw error
+        }
     }
 }

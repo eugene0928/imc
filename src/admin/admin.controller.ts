@@ -81,9 +81,9 @@ export class AdminController {
         return this.adminService.editStudent(id, dto)
     }
 
-    @Delete()
+    @Delete("delete-student")
     @UseGuards(AdminJwtGuard)
-    async deleteStudent() {
-        return this.adminService.deleteStudent()
+    async deleteStudent(@Query("id", ParseUUIDPipe) id: string) {
+        return this.adminService.deleteStudent(id)
     }
 }
