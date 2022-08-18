@@ -1,10 +1,10 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { GroupTeacher, Teacher } from '@prisma/client';
+import { Faculty, GroupTeacher, Teacher } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { editTeacherDto, editTeacherGroupDto, newTeacherDto } from './dto';
+import { editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto } from './dto';
 import * as argon from "argon2";
 
 @Injectable()
@@ -181,8 +181,118 @@ export class AdminService {
         }
     }
 
-    deleteTeacher() {
+    async deleteTeacher(id: string): Promise<{ status: number, error: boolean, message: string, data: null }> {
+        try {
+            // get teacher from db
+            const teacher = await this.prisma.teacher.findFirst({ where: { id, deleted_at: null } })
+            // check if they aren't deleted
+            if(!teacher) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "The teacher is not fount"
+                })
+            }
+            // soft delete from db
+            await this.prisma.teacher.update({
+                where: { id },
+                data: { deleted_at: new Date() }
+            })
+            // soft delete teacher's all groups
+            await this.prisma.groupTeacher.updateMany({
+                where: { teacher_id: id },
+                data: { deleted_at: new Date() }
+            })
+            // return response
+            return  { status: 200, error: false, message: "Resource deleted successfully", data: null } 
+        } catch (error) {
+            throw error
+        }
+    }
 
+    async addFaculty(dto: FacultyDto, admin): Promise<{ status: number, error: boolean, message: string, data: Faculty }> {
+            try {
+                // create new faculty in db
+                const faculty = await this.prisma.faculty.create({
+                    data: {
+                        ...dto,
+                        admin_id: admin.id
+                    }
+                })
+                // return response
+                return { status: 201, error: false, message: "Faculty is successfully added", data: faculty }
+            } catch (error) {
+                if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
+                    throw new BadRequestException({
+                        status: 400, 
+                        error: true,
+                        message: error.message
+                    })
+                }
+                throw error
+            }
+    }
+
+    async editFaculty(id: string, dto: FacultyDto, admin): Promise<{ status: number, error: boolean, message: string, data: Faculty }> {
+        try {
+            // get valid faculty from db
+            const faculty = await this.prisma.faculty.findFirst({ where: { id, deleted_at: null } })
+            // check faculty if is deleted
+            if(!faculty) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: "Such faculty is not fount"
+                })
+            }
+            // check if dto is the same in db
+            if(dto.name == faculty.name) {
+                return { status: 200, error: false, message: "Nothing is updated", data: faculty }
+            }
+            // update faculty in db
+            const updatedFaculty = await this.prisma.faculty.update({
+                where: { id },
+                data: {
+                    ...dto,
+                    admin_id: admin.id
+                }
+            })
+            // return response
+            return { status: 200, error: false, message: "Faculty is successfully updated", data: updatedFaculty }
+        } catch (error) {
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
+            throw error
+        }
+    }
+
+    async deleteFaculty(id: string): Promise<{ status: number, error: boolean, message: string, data: null }> {
+        try {
+            // get faculty from db
+            const faculty = await this.prisma.faculty.findFirst({ where: { id, deleted_at: null } })
+            // check if exists
+            if(!faculty) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true, 
+                    message: "The faculty is not fount"
+                })
+            }
+            // soft delete
+            await this.prisma.faculty.update({ 
+                where: { id },
+                data: { deleted_at: new Date() }
+            })
+            // return response
+            return { status: 200, error: false, message: "Resourse is successfully deleted", data: null }
+        } catch (error) {
+            throw error
+        }
     }
 
     addStudent() {

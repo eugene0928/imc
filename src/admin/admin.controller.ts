@@ -3,7 +3,7 @@ import { AdminJwtGuard } from 'src/auth/guard';
 import { Request } from "express";
 import { AdminService } from './admin.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { editTeacherDto, editTeacherGroupDto, newTeacherDto } from './dto';
+import { editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto } from './dto';
 
 @Controller('admin')
 export class AdminController {
@@ -42,10 +42,28 @@ export class AdminController {
         return this.adminService.editTeacherGroups(id, group_id, dto)
     }
 
-    @Delete()
+    @Delete("delete-teacher")
     @UseGuards(AdminJwtGuard)
-    async deleteTeacher() {
-        return this.adminService.deleteTeacher()
+    async deleteTeacher(@Query("id", ParseUUIDPipe) id: string) {
+        return this.adminService.deleteTeacher(id)
+    }
+
+    @Post("add-faculty")
+    @UseGuards(AdminJwtGuard)
+    async addFaculty(@Body() dto: FacultyDto, @Req() req: Request) {
+        return this.adminService.addFaculty(dto, req.user)
+    }   
+
+    @Patch("edit-faculty")
+    @UseGuards(AdminJwtGuard)
+    async editFaculty(@Query("id", ParseUUIDPipe) id: string, @Body() dto: FacultyDto, @Req() req: Request) {
+        return this.adminService.editFaculty(id, dto, req.user)
+    }
+
+    @Delete("delete-faculty")
+    @UseGuards(AdminJwtGuard)
+    deleteFaculty(@Query("id", ParseUUIDPipe) id: string) {
+        return this.adminService.deleteFaculty(id)
     }
 
     @Post("add-student")
