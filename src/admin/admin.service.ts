@@ -538,4 +538,25 @@ export class AdminService {
             throw error
         }
     }
+
+    async getStudentByLogin(login: string): Promise<{ status: number, error: boolean, message: string, data: Student }> {
+        try {
+            // get student from db by login
+            const student = await this.prisma.student.findUnique({ where: { login } })
+            // check if exists
+            if(!student) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "Student is not fount"
+                })
+            }
+            // delete password
+            delete student.password
+            // return response
+            return { status: 200, error: false, message: "Available student", data: student }
+        } catch (error) {
+            throw error
+        }
+    }
 }

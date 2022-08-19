@@ -128,4 +128,10 @@ export class AdminController {
     getStudents() {
         return this.adminService.getStudents()
     }
+
+    @Get("student/:login")
+    @UseGuards(AdminJwtGuard)
+    getStudentByLogin(@Param("login") login: string) {
+        return this.adminService.getStudentByLogin(login)
+    }
 }
