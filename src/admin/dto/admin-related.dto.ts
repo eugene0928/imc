@@ -182,6 +182,12 @@ export class EditStudentDto {
     @IsUUID()
     group_id?: string
 }
+
+export class SubjectDto {
+    @IsNotEmpty()
+    @Matches(/^[A-Za-z\s]+$/)
+    name: string
+}
 // export class groupDto {
 //     groups: {teacher_id: string, group_id: string} | {teacher_id: string, group_id: string}[]
 // }
