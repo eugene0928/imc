@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Faculty, Group, GroupTeacher, Subject, Teacher } from '@prisma/client';
+import { Faculty, Group, GroupTeacher, Student, Subject, Teacher } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
@@ -518,6 +518,22 @@ export class AdminService {
             })
             // return response
             return { status: 200, error: false, message: "All teachers", data: teachers }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getStudents(): Promise<{ status: number, error: boolean, message: string, data: Student[] }>  {
+        try {
+            // get student from db
+            let students = await this.prisma.student.findMany()
+            // delete passwords
+            students = students.map(student => {
+                delete student.password
+                return student
+            })
+            // return response
+            return { status: 200, error: false, message: "All students", data: students }
         } catch (error) {
             throw error
         }

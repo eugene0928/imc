@@ -122,4 +122,10 @@ export class AdminController {
     getTeachers() {
         return this.adminService.getTeachers()
     }
+
+    @Get("students")
+    @UseGuards(AdminJwtGuard)
+    getStudents() {
+        return this.adminService.getStudents()
+    }
 }
