@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Faculty, GroupTeacher, Subject, Teacher } from '@prisma/client';
+import { Faculty, Group, GroupTeacher, Subject, Teacher } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
@@ -491,6 +491,17 @@ export class AdminService {
             })
             // return response
             return { status: 200, error: false, message: "Resource is deleted successfully", data: null }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllGroups(): Promise<{ status: number, error: boolean, message: string, data: Group[] }> {
+        try {
+            // get all groups from db
+            const groups = await this.prisma.group.findMany()
+            // return response
+            return { status: 200, error: false, message: "All available groups", data: groups }
         } catch (error) {
             throw error
         }

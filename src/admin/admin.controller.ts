@@ -110,4 +110,10 @@ export class AdminController {
     deleteSubject(@Query("id", ParseUUIDPipe) id: string) {
         return this.adminService.deleteSubject(id)
     }
+
+    @Get("groups")
+    @UseGuards(AdminJwtGuard)
+    getGroups() {
+        return this.adminService.getAllGroups()
+    }
 }
