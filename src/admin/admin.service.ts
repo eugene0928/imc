@@ -1,10 +1,10 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Faculty, GroupTeacher, Teacher } from '@prisma/client';
+import { Faculty, GroupTeacher, Subject, Teacher } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
 import * as argon from "argon2";
 
 @Injectable()
@@ -402,6 +402,95 @@ export class AdminService {
              })
             // return response
             return { status: 200, error: false, message: "Resourse is deleted successfully", data: null }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllSubjects() {
+        try {
+            // get all available subjects from db
+            const subjects = await this.prisma.subject.findMany()
+            // return response
+            return { status: 200, error: false, message: "All available subjects", data: subjects }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createSubject(dto: SubjectDto, admin): Promise<{ status: number, error: boolean, message: string, data: Subject }> {
+        try {
+            // create subject into db
+            const newSubject = await this.prisma.subject.create({
+                data: { name: dto.name, admin_id: admin.id }
+            })
+            // return response
+            return { status: 201, error: false, message: "New subject is added successfully", data: newSubject }
+        } catch (error) {
+            if(error instanceof PrismaClientKnownRequestError && error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
+            throw error
+        }
+    }
+
+    async editSubject(id: string, dto: SubjectDto, admin): Promise<{ status: number, error: boolean, message: string, data: Subject }> {
+        try {
+            // get subject from db
+            const subject = await this.prisma.subject.findFirst({ where: { id, deleted_at: null } })
+            // check if exists
+            if(!subject) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: "The subject is not fount"
+                })
+            }
+            // soft delete the subject
+            const updatedSubject = await this.prisma.subject.update({
+                where: { id },
+                data: {
+                    ...dto,
+                    admin_id: admin.id
+                }
+            })
+            // return response
+            return { status: 200, error: false, message: "Subject is updated successfully", data: updatedSubject }
+        } catch (error) {
+            if(error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: error.message
+                })
+            }
+            throw error
+        }
+    }
+
+    async deleteSubject(id: string): Promise<{ status: number, error: boolean, message: string, data: null }> {
+        try {
+            // get subject from db
+            const subject = await this.prisma.subject.findFirst({ where: { id, deleted_at: null } })
+            // check if exists
+            if(!subject) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "Subject is not fount"
+                })
+            }
+            // soft delete if
+            await this.prisma.subject.update({
+                where: { id },
+                data: { deleted_at: new Date() }
+            })
+            // return response
+            return { status: 200, error: false, message: "Resource is deleted successfully", data: null }
         } catch (error) {
             throw error
         }

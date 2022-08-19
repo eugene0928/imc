@@ -3,7 +3,7 @@ import { AdminJwtGuard } from 'src/auth/guard';
 import { Request } from "express";
 import { AdminService } from './admin.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
 
 @Controller('admin')
 export class AdminController {
@@ -85,5 +85,29 @@ export class AdminController {
     @UseGuards(AdminJwtGuard)
     async deleteStudent(@Query("id", ParseUUIDPipe) id: string) {
         return this.adminService.deleteStudent(id)
+    }
+
+    @Get("subjects")
+    @UseGuards(AdminJwtGuard)
+    getAllSubjects() {
+        return this.adminService.getAllSubjects()
+    }
+
+    @Post("add-subject")
+    @UseGuards(AdminJwtGuard)
+    createSubject(@Body() dto: SubjectDto, @Req() req: Request) {
+        return this.adminService.createSubject(dto, req.user)
+    }
+
+    @Patch("edit-subject")
+    @UseGuards(AdminJwtGuard)
+    editSubject(@Query("id", ParseUUIDPipe) id: string, @Body() dto: SubjectDto, @Req() req: Request) {
+        return this.adminService.editSubject(id, dto, req.user)
+    }
+
+    @Delete("delete-subject")
+    @UseGuards(AdminJwtGuard)
+    deleteSubject(@Query("id", ParseUUIDPipe) id: string) {
+        return this.adminService.deleteSubject(id)
     }
 }
