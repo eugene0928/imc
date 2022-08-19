@@ -116,4 +116,10 @@ export class AdminController {
     getGroups() {
         return this.adminService.getAllGroups()
     }
+
+    @Get("teachers")
+    @UseGuards(AdminJwtGuard)
+    getTeachers() {
+        return this.adminService.getTeachers()
+    }
 }

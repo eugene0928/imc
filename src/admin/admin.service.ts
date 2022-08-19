@@ -506,4 +506,20 @@ export class AdminService {
             throw error
         }
     }
+
+    async getTeachers(): Promise<{ status: number, error: boolean, message: string, data: Teacher[] }> {
+        try {
+            // get teachers from db
+            let teachers = await this.prisma.teacher.findMany()
+            // delete passwords
+            teachers = teachers.map(teacher => {
+                delete teacher.password
+                return teacher
+            })
+            // return response
+            return { status: 200, error: false, message: "All teachers", data: teachers }
+        } catch (error) {
+            throw error
+        }
+    }
 }
