@@ -4,7 +4,7 @@ import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@pri
 import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, GroupDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, GroupDto, newTeacherDto, SemesterDto, StudentDto, SubjectDto } from './dto';
 import * as argon from "argon2";
 
 @Injectable()
@@ -632,6 +632,22 @@ export class AdminService {
             })
             // return response
             return { status: 200, error: false, message: "Resource is deleted successfully", data: null }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createSemester(dto: SemesterDto, admin) {
+        try {
+            // create semester
+            const semester = await this.prisma.semester.create({
+                data: {
+                    ...dto,
+                    admin_id: admin.id
+                }
+            })
+            // return response
+            return { status: 201, error: false, message: "Semester is added successfully", data: semester }
         } catch (error) {
             throw error
         }

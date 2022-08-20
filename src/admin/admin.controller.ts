@@ -3,7 +3,7 @@ import { AdminJwtGuard } from 'src/auth/guard';
 import { Request } from "express";
 import { AdminService } from './admin.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, GroupDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, GroupDto, newTeacherDto, SemesterDto, StudentDto, SubjectDto } from './dto';
 
 @Controller('admin')
 export class AdminController {
@@ -151,5 +151,11 @@ export class AdminController {
     @UseGuards(AdminJwtGuard)
     deleteGroup(@Query("id", ParseUUIDPipe) id: string) {
         return this.adminService.deleteGroup(id)
+    }
+
+    @Post("add-semester")
+    @UseGuards(AdminJwtGuard)
+    createSemester(@Body() dto: SemesterDto, @Req() req: Request) {
+        return this.adminService.createSemester(dto, req.user)
     }
 }
