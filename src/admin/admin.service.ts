@@ -4,7 +4,7 @@ import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@pri
 import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, GroupDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
 import * as argon from "argon2";
 
 @Injectable()
@@ -558,5 +558,35 @@ export class AdminService {
         } catch (error) {
             throw error
         }
+    }
+
+    async createGroup(dto: GroupDto) {
+        try {
+            // insert data into db
+            const group = await this.prisma.group.create({
+                data: {
+                    ...dto
+                }
+            })
+            // return response
+            return { status: 201, error: false, message: "Group is added successfully", data: group }
+        } catch (error) {
+            if(error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
+            throw error
+        }
+    }
+
+    async editGroup(id: string, dto: GroupDto) {
+
+    }
+
+    async deleteGroup() {
+
     }
 }

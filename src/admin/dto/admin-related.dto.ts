@@ -188,6 +188,12 @@ export class SubjectDto {
     @Matches(/^[A-Za-z\s]+$/)
     name: string
 }
+
+export class GroupDto {
+    @IsNotEmpty()
+    @Length(1, 1)
+    name: string
+}
 // export class groupDto {
 //     groups: {teacher_id: string, group_id: string} | {teacher_id: string, group_id: string}[]
 // }

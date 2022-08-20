@@ -3,7 +3,7 @@ import { AdminJwtGuard } from 'src/auth/guard';
 import { Request } from "express";
 import { AdminService } from './admin.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
+import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, GroupDto, newTeacherDto, StudentDto, SubjectDto } from './dto';
 
 @Controller('admin')
 export class AdminController {
@@ -134,4 +134,12 @@ export class AdminController {
     getStudentByLogin(@Param("login") login: string) {
         return this.adminService.getStudentByLogin(login)
     }
+
+    @Post("add-group")
+    @UseGuards(AdminJwtGuard)
+    addGroup(@Body() dto: GroupDto) {
+        return this.adminService.createGroup(dto)
+    }
+
+    
 }
