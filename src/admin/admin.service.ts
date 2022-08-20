@@ -560,7 +560,7 @@ export class AdminService {
         }
     }
 
-    async createGroup(dto: GroupDto) {
+    async createGroup(dto: GroupDto): Promise<{ status: number, error: boolean, message: string, data: Group }> {
         try {
             // insert data into db
             const group = await this.prisma.group.create({
@@ -582,7 +582,7 @@ export class AdminService {
         }
     }
 
-    async editGroup(id: string, dto: GroupDto) {
+    async editGroup(id: string, dto: GroupDto): Promise<{ status: number, error: boolean, message: string, data: Group }> {
         try {
             // get group from db
             const group = await this.prisma.group.findFirst({ where: { id, deleted_at: null } })
