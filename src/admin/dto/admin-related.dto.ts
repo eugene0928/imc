@@ -194,6 +194,16 @@ export class GroupDto {
     @Length(1, 1)
     name: string
 }
+
+export class SemesterDto {
+    @IsNotEmpty()
+    @Length(1, 4)
+    name: string
+
+    @IsNotEmpty()
+    @IsUUID()
+    group_id: string
+}
 // export class groupDto {
 //     groups: {teacher_id: string, group_id: string} | {teacher_id: string, group_id: string}[]
 // }
