@@ -639,15 +639,24 @@ export class AdminService {
 
     async createSemester(dto: SemesterDto, admin) {
         try {
+            // check if the group has a semester like in dto
+            const semester = await this.prisma.semester.findFirst({ where: { name: dto.name, group_id: dto.group_id } })
+            if(semester) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: "The semester is already exists for this group"
+                })
+            }
             // create semester
-            const semester = await this.prisma.semester.create({
+            const newSemester = await this.prisma.semester.create({
                 data: {
                     ...dto,
                     admin_id: admin.id
                 }
             })
             // return response
-            return { status: 201, error: false, message: "Semester is added successfully", data: semester }
+            return { status: 201, error: false, message: "Semester is added successfully", data: newSemester }
         } catch (error) {
             throw error
         }
