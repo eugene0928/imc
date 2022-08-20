@@ -83,7 +83,7 @@ model Teacher {
 
 model Group {
   id            String    @id       @db.Uuid                @default(uuid())
-  name          String              @db.VarChar(1)
+  name          String    @unique   @db.VarChar(1)
 
   created_at    DateTime            @db.Date()              @default(now())
   updated_at    DateTime            @updatedAt
