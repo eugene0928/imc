@@ -141,5 +141,9 @@ export class AdminController {
         return this.adminService.createGroup(dto)
     }
 
-    
+    @Patch("edit-group")
+    @UseGuards(AdminJwtGuard)
+    editGroup(@Query("id", ParseUUIDPipe) id: string, @Body() dto: GroupDto) {
+        return this.adminService.editGroup(id, dto)
+    }
 }

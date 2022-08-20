@@ -583,7 +583,34 @@ export class AdminService {
     }
 
     async editGroup(id: string, dto: GroupDto) {
-
+        try {
+            // get group from db
+            const group = await this.prisma.group.findFirst({ where: { id, deleted_at: null } })
+            // check if exists
+            if(!group) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "The group is not fount"
+                })
+            }
+            // update it
+            const updatedGroup = await this.prisma.group.update({
+                where: { id },
+                data: dto
+            })
+            // return response
+            return { status: 200, error: false, message: "Group is updated successfully", data: updatedGroup }
+        } catch (error) {
+            if(error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: error.message
+                })
+            }
+            throw error
+        }
     }
 
     async deleteGroup() {
