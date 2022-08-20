@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Faculty, Group, GroupTeacher, Student, Subject, Teacher } from '@prisma/client';
+import { Faculty, Group, GroupTeacher, Prisma, Semester, Student, Subject, Teacher } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
@@ -501,7 +501,7 @@ export class AdminService {
             // get all groups from db
             const groups = await this.prisma.group.findMany()
             // return response
-            return { status: 200, error: false, message: "All available groups", data: groups }
+            return { status: 200, error: false, message: "All groups", data: groups }
         } catch (error) {
             throw error
         }
@@ -637,7 +637,7 @@ export class AdminService {
         }
     }
 
-    async createSemester(dto: SemesterDto, admin) {
+    async createSemester(dto: SemesterDto, admin): Promise<{ status: number, error: boolean, message: string, data: Semester }> {
         try {
             // check if the group has a semester like in dto
             const semester = await this.prisma.semester.findFirst({ where: { name: dto.name, group_id: dto.group_id } })
@@ -657,6 +657,30 @@ export class AdminService {
             })
             // return response
             return { status: 201, error: false, message: "Semester is added successfully", data: newSemester }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getSemesterByDateAndName(name: string, date: string): Promise<{ status: number, error: boolean, message: string, data: {} }> {
+        try {
+            // get semester
+            const time = `%${date}%`
+            const semester = await this.prisma.$queryRawUnsafe(
+                `SELECT * FROM semester WHERE (name = $1 and created_at::varchar LIKE $2)`,
+                name,
+                time
+            )
+            // check if exists
+            if(!semester) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: "The semester for this group is not fount"
+                })
+            }
+            // return response
+            return { status: 200, error: false, message: "Available semester of the group", data: semester }
         } catch (error) {
             throw error
         }

@@ -158,4 +158,10 @@ export class AdminController {
     createSemester(@Body() dto: SemesterDto, @Req() req: Request) {
         return this.adminService.createSemester(dto, req.user)
     }
+
+    @Get("semester")
+    @UseGuards(AdminJwtGuard)
+    getGroup(@Query("name") name: string, @Query("date") date: string) {
+        return this.adminService.getSemesterByDateAndName(name, date)
+    }
 }
