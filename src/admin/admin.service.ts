@@ -613,7 +613,27 @@ export class AdminService {
         }
     }
 
-    async deleteGroup() {
-
+    async deleteGroup(id: string): Promise<{ status: number, error: boolean, message: string, data: null }> {
+        try {
+            // get data from db
+            const group = await this.prisma.group.findFirst({ where: { id, deleted_at: null } })
+            // check if exists
+            if(!group) {
+                throw new BadRequestException({
+                    status: 400, 
+                    error: true,
+                    message: "The group is not fount"
+                })
+            }
+            // soft delete if
+            await this.prisma.group.update({ 
+                where: { id },
+                data: { deleted_at: new Date() }
+            })
+            // return response
+            return { status: 200, error: false, message: "Resource is deleted successfully", data: null }
+        } catch (error) {
+            throw error
+        }
     }
 }

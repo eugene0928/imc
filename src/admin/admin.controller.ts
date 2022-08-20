@@ -146,4 +146,10 @@ export class AdminController {
     editGroup(@Query("id", ParseUUIDPipe) id: string, @Body() dto: GroupDto) {
         return this.adminService.editGroup(id, dto)
     }
+
+    @Delete("delete-group")
+    @UseGuards(AdminJwtGuard)
+    deleteGroup(@Query("id", ParseUUIDPipe) id: string) {
+        return this.adminService.deleteGroup(id)
+    }
 }
