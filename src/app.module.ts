@@ -6,6 +6,7 @@ import { SuperAdminModule } from './super-admin/super-admin.module';
 import { AdminModule } from './admin/admin.module';
 import { TeacherService } from './teacher/teacher.service';
 import { TeacherModule } from './teacher/teacher.module';
+import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { TeacherModule } from './teacher/teacher.module';
     AuthModule,
     SuperAdminModule,
     AdminModule,
-    TeacherModule
+    TeacherModule,
+    StudentModule
   ],
   controllers: [],
   providers: [TeacherService],
