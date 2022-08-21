@@ -161,7 +161,7 @@ export class AdminController {
 
     @Get("semester")
     @UseGuards(AdminJwtGuard)
-    getGroup(@Query("name") name: string, @Query("date") date: string) {
+    getGroup(@Query("name") name: string, @Query("date") date: Date) {
         return this.adminService.getSemesterByDateAndName(name, date)
     }
 }

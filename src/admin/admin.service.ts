@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Faculty, Group, GroupTeacher, Prisma, Semester, Student, Subject, Teacher } from '@prisma/client';
+import { Faculty, Group, GroupTeacher, Semester, Student, Subject, Teacher } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
@@ -662,15 +662,20 @@ export class AdminService {
         }
     }
 
-    async getSemesterByDateAndName(name: string, date: string): Promise<{ status: number, error: boolean, message: string, data: {} }> {
+    async getSemesterByDateAndName(name: string, date: Date): Promise<{ status: number, error: boolean, message: string, data: {} }> {
         try {
             // get semester
-            const time = `%${date}%`
-            const semester = await this.prisma.$queryRawUnsafe(
-                `SELECT * FROM semester WHERE (name = $1 and created_at::varchar LIKE $2)`,
-                name,
-                time
-            )
+            const semester = await this.prisma.semester.findMany({
+                where: {
+                    name,
+                    created_at: {
+                        gte: date,
+                    }
+                },
+                include: {
+                    group: true
+                }
+            })
             // check if exists
             if(!semester) {
                 throw new BadRequestException({
