@@ -27,6 +27,7 @@ export class newTeacherDto {
     file: File
 
     @IsOptional()
+    @Matches(/^(male)$|^(female)$/)
     gender?: string
 
     @IsNotEmpty()
@@ -70,6 +71,7 @@ export class editTeacherDto {
     password?: string
 
     @IsOptional()
+    @Matches(/^(male)$|^(female)$/)
     gender?: string
 
     @IsOptional()
