@@ -138,8 +138,7 @@ model Student {
   email                         String?  @unique    @db.VarChar(255)
   address                       String?             @db.VarChar(255)
   nationality                   String?             @db.VarChar(255)    @default("Uzbek")
-  inn                           String?             @db.VarChar(255)
-  password_series_and_number    String?  @unique    @db.VarChar(255)
+  passport_series_and_number    String?  @unique    @db.VarChar(255)
   date_issued                   DateTime?           @db.Date
   issued_by                     String?             @db.VarChar(255)
   date_expired                  DateTime?           @db.Date
