@@ -11,7 +11,7 @@ export class AuthService {
 
     async loginSuperAdmin(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get super_admin from db
-        const super_admin = await this.prisma.super_admin.findFirst({ where: { login: dto.login } })
+        const super_admin = await this.prisma.super_admin.findFirst({ where: { login: dto.login, deleted_at: null } })
         // check if exists
         if(!super_admin) {
             throw new ForbiddenException({ 
@@ -44,7 +44,7 @@ export class AuthService {
 
     async loginAdmin(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get admin from db
-        const admin = await this.prisma.admin.findFirst({ where: { login: dto.login } })
+        const admin = await this.prisma.admin.findFirst({ where: { login: dto.login, deleted_at: null} })
         // check if exists
         if(!admin) throw new ForbiddenException({ 
             status: 403,
@@ -76,7 +76,7 @@ export class AuthService {
 
     async loginTeacher(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get teacher from db
-        const teacher = await this.prisma.teacher.findFirst({ where: { login: dto.login } })
+        const teacher = await this.prisma.teacher.findFirst({ where: { login: dto.login, deleted_at: null } })
         // check if exists
         if(!teacher) throw new ForbiddenException({ 
             status: 403,
@@ -108,7 +108,7 @@ export class AuthService {
 
     async loginStudent(dto: AuthDto): Promise<{ status: number, error: boolean, message: string, token: string }> {
         // get teacher from db
-        const student = await this.prisma.student.findFirst({ where: { login: dto.login } })
+        const student = await this.prisma.student.findFirst({ where: { login: dto.login, deleted_at: null } })
         // check if exists
         if(!student) throw new ForbiddenException({ 
             status: 403,
