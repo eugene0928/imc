@@ -18,7 +18,7 @@ export class TeacherJwtGuard extends AuthGuard("teacherjwt") {
     }
 }
 
-export class StudentJwtGuard extends AuthGuard("studentwt") {
+export class StudentJwtGuard extends AuthGuard("studentjwt") {
     constructor() {
         super()
     }
