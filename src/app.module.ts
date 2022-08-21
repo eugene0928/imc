@@ -4,6 +4,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { SuperAdminModule } from './super-admin/super-admin.module';
 import { AdminModule } from './admin/admin.module';
+import { TeacherService } from './teacher/teacher.service';
+import { TeacherModule } from './teacher/teacher.module';
 
 @Module({
   imports: [
@@ -11,9 +13,10 @@ import { AdminModule } from './admin/admin.module';
     PrismaModule,
     AuthModule,
     SuperAdminModule,
-    AdminModule
+    AdminModule,
+    TeacherModule
   ],
   controllers: [],
-  providers: [],
+  providers: [TeacherService],
 })
 export class AppModule {}
