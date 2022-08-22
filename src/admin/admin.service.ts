@@ -542,7 +542,7 @@ export class AdminService {
     async getStudentByLogin(login: string): Promise<{ status: number, error: boolean, message: string, data: Student }> {
         try {
             // get student from db by login
-            const student = await this.prisma.student.findUnique({ where: { login } })
+            const student = await this.prisma.student.findUnique({ where: { login }, include: { mark: true } })
             // check if exists
             if(!student) {
                 throw new BadRequestException({
