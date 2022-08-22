@@ -153,7 +153,7 @@ model Student {
   group_id                      String              @db.Uuid
   group     Group                                   @relation(fields: [group_id], references: [id])
 
-  mark      Mark?
+  mark      Mark[]
   @@map("student")
 }
 
@@ -203,7 +203,7 @@ model Mark {
   updated_at    DateTime                             @updatedAt
   deleted_at    DateTime?                            @db.Date()
 
-  student_id    String              @unique          @db.Uuid 
+  student_id    String                               @db.Uuid 
   student       Student                              @relation(fields: [student_id], references: [id])
 
   semester_id   String                               @db.Uuid
