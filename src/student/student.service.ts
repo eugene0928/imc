@@ -6,6 +6,22 @@ import { StudentDto } from './dto';
 export class StudentService {
     constructor(private prisma: PrismaService) {}
 
+    async getMe(student: any) {
+        try {
+            // get student from db
+            const info = await this.prisma.student.findFirst({ 
+                where: { id: student.id },
+                include: { faculty: true, group: true, mark: true }
+            })
+            // delete password
+            delete info.password 
+            // // return response
+            return { status: 200, error: false, message: "The student's info", data: info }
+        } catch (error) {
+            throw error
+        }
+    }
+
     async fillForm(id: string, dto: StudentDto) {
         try {
             // get student from db
