@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
+import { group } from "console";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Token } from "../dto";
@@ -58,7 +59,7 @@ export class TeacherJwtStrategy extends PassportStrategy(Strategy, "teacherjwt")
 
     async validate(payload: Token) {
         // get teacher from db
-        const teacher = await this.prisma.teacher.findFirst({ where: { id: payload.id, deleted_at: null }, include: { subject: true, groups: true } })
+        const teacher = await this.prisma.teacher.findFirst({ where: { id: payload.id, deleted_at: null }, include: { subject: true, groups: { include: { groups: true } } } })
         // if not exists return null to block the route
         if(!teacher) return null
         // if exists delete hashed passw
