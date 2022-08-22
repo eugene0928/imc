@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { AdminDto, EditAdminDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from "argon2";
