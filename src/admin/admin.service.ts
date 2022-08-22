@@ -399,7 +399,7 @@ export class AdminService {
             await this.prisma.student.update({ 
                 where: { id },
                 data: { deleted_at: new Date() }
-             })
+            })
             // return response
             return { status: 200, error: false, message: "Resourse is deleted successfully", data: null }
         } catch (error) {
