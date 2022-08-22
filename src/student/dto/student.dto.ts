@@ -34,7 +34,7 @@ export class StudentDto {
     @IsOptional()
     @Length(2, 50)
     @Matches(/^[A-Za-z]+$/)
-    nationality?: string
+    nationality?: string = "uzbek"
 
     @IsNotEmpty()
     @Matches(/^([A-Z]){2}\d{7}$/)
@@ -42,7 +42,7 @@ export class StudentDto {
 
     @IsNotEmpty()
     @IsISO8601()
-    data_issued: Date
+    date_issued: Date
 
     @IsNotEmpty()
     @Length(2, 255)
