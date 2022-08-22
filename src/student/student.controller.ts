@@ -11,7 +11,7 @@ export class StudentController {
     @Get("me")
     @UseGuards(StudentJwtGuard)
     getMe(@Req() req: Request) {
-        return req.user
+        return this.StudentService.getMe(req.user)
     }
 
     @Get("mark")
