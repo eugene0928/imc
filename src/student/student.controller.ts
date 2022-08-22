@@ -13,6 +13,12 @@ export class StudentController {
     getMe(@Req() req: Request) {
         return req.user
     }
+
+    @Get("mark")
+    @UseGuards(StudentJwtGuard)
+    getMark(@Query("id", ParseUUIDPipe) id: string) {
+        return this.StudentService.getMark(id)
+    }
     
     @Put("fill-form")
     @UseGuards(StudentJwtGuard)

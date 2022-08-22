@@ -60,4 +60,28 @@ export class StudentService {
             throw error
         }
     }
+    
+    async getMark(id: string) {
+        try {
+            // get all mark from db
+            let marks = await this.prisma.mark.findMany({ where: { student_id: id, deleted_at: null }, include: { subject: true, semester: true,  student: true } })
+            // check if exists
+            if(!marks.length) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "The student's marks are not available"
+                })
+            }
+            // delete student's password
+            marks = marks.map(mark => {
+                delete mark.student.password
+                return mark
+            })
+            // return response
+            return { status: 200, error: false, message: "The student's marks", data: marks }
+        } catch (error) {
+            throw error
+        }
+    }
 }
