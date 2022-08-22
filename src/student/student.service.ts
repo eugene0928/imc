@@ -23,19 +23,40 @@ export class StudentService {
                 throw new BadRequestException({
                     status: 400,
                     error: true,
-                    message: "Student's credentials have been already updated"
+                    message: "Student's credentials have been already updated. To change credentials, please contact the student department"
                 })
             }
             // update record
             const updatedStudent = await this.prisma.student.update({
                 where: { id },
-                data: dto
+                data: {
+                    name: dto.name,
+                    surname: dto.surname,
+                    date_of_birth: new Date(dto.date_of_birth),
+                    gender: dto.gender,
+                    phone_number: dto.phone_number,
+                    email: dto.email,
+                    address: dto.address,
+                    nationality: dto.nationality,
+                    passport_series_and_number: dto.passport_series_and_number,
+                    date_issued: new Date(dto.date_issued),
+                    date_expired: new Date(dto.date_expired),
+                    issued_by: dto.issued_by,
+                    is_completed: true
+                }
             })
             // delete password
             delete updatedStudent.password
             // return response
             return { status: 200, error: false, message: "Credentials are updated successfully", data: updatedStudent }
         } catch (error) {
+            if(error.code == "P2002") {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: error.message
+                })
+            }
             throw error
         }
     }
