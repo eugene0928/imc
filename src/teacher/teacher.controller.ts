@@ -15,8 +15,8 @@ export class TeacherController {
 
     @Get("groups")
     @UseGuards(TeacherJwtGuard)
-    getGroups() {
-
+    getGroups(@Req() req: Request) {
+        return this.TeacherService.getGroups(req.user)
     }
 
     @Get("students/:group/:term")
