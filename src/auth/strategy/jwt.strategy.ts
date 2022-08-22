@@ -58,7 +58,7 @@ export class TeacherJwtStrategy extends PassportStrategy(Strategy, "teacherjwt")
 
     async validate(payload: Token) {
         // get teacher from db
-        const teacher = await this.prisma.teacher.findFirst({ where: { id: payload.id, deleted_at: null } })
+        const teacher = await this.prisma.teacher.findFirst({ where: { id: payload.id, deleted_at: null }, include: { subject: true, groups: true } })
         // if not exists return null to block the route
         if(!teacher) return null
         // if exists delete hashed passw
