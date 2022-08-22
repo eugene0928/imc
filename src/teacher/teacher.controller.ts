@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { TeacherJwtGuard } from 'src/auth/guard';
 import { TeacherService } from './teacher.service';
@@ -21,8 +21,8 @@ export class TeacherController {
 
     @Get("students/:group/:term")
     @UseGuards(TeacherJwtGuard)
-    getStudentsByGroup() {
-
+    getStudentsByGroup(@Param() params: { group: string, term: string }, @Req() req: Request) {
+        return this.TeacherService.getStudentsByGroup(params.group, params.term, req.user)
     }
 
     @Post("mark/:group/mid-term/:subject")
