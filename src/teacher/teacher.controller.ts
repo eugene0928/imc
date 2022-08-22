@@ -1,15 +1,16 @@
-import { Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { TeacherJwtGuard } from 'src/auth/guard';
 import { TeacherService } from './teacher.service';
 
 @Controller('teacher')
 export class TeacherController {
-    constructor(private teacherService: TeacherService) {}
+    constructor(private TeacherService: TeacherService) {}
 
     @Get("me")
     @UseGuards(TeacherJwtGuard)
-    getMe() {
-
+    getMe(@Req() req: Request) {
+        return { status: 200, error: false, message: "Teacher's info", data: req.user }
     }
 
     @Get("groups")
