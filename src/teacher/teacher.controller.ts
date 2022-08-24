@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, ParseArrayPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseArrayPipe, ParseUUIDPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { TeacherJwtGuard } from 'src/auth/guard';
-import { MidTermDdto } from './dto';
+import { FinalMarkDto, MidTermDdto } from './dto';
 import { TeacherService } from './teacher.service';
 
 @Controller('teacher')
@@ -32,10 +32,10 @@ export class TeacherController {
         return this.TeacherService.markMidTerm(params, dto)
     }
 
-    @Patch("mark/final/:term/:id/:subject")
+    @Patch("mark/final/:id")
     @UseGuards(TeacherJwtGuard)
-    markFinalTerm() {
-
+    markFinalTerm(@Param("id", ParseUUIDPipe) id: string, @Body() dto: FinalMarkDto) {
+        return this.TeacherService.markFinalTerm(id, dto)
     }
 
     @Patch("mark/edit/:term/:id/:subject")

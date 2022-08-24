@@ -1,7 +1,7 @@
 import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
-import { GroupTeacher } from '@prisma/client';
+import { GroupTeacher, Mark } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { MidTermDdto } from './dto';
+import { FinalMarkDto, MidTermDdto } from './dto';
 
 @Injectable()
 export class TeacherService {
@@ -74,6 +74,38 @@ export class TeacherService {
             })
             // return response
             return { status: 201, error: false, message: "Mid-term marks are successfully inserted", data: marks }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async markFinalTerm(id: string, dto: FinalMarkDto): Promise<{ status: number, error: boolean, message: string, data: Mark }> {
+        try {
+            // get data from db by id
+            const mark = await this.prisma.mark.findFirst({ where: { id } })
+            // check if exists
+            if(!mark) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "The credential is not fount"
+                })
+            }
+            // check if mid_term is exists
+            if(!mark.mid_term) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "Mid-term is not marked yet. Please, mark it first"
+                })
+            }
+            // update data (mark final term)
+            const updatedMidTerm = await this.prisma.mark.update({
+                where: { id },
+                data: { final_term: dto.final_term, total: `${(+dto.final_term + +mark.mid_term)/2}` }
+            })
+            // return response
+            return { status: 200, error: false, message: "Final term is marked", data: updatedMidTerm }
         } catch (error) {
             throw error
         }
