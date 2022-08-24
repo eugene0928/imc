@@ -1,6 +1,7 @@
 import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
 import { GroupTeacher } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MidTermDdto } from './dto';
 
 @Injectable()
 export class TeacherService {
@@ -60,6 +61,19 @@ export class TeacherService {
             }
             // return response
             return { status: 200, error: false, message: "All available students", data: students }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async markMidTerm(params: { group: string, subject: string }, dto: MidTermDdto[]) {
+        try {
+            // put marks all students once in db
+            const marks = await this.prisma.mark.createMany({
+                data: dto
+            })
+            // return response
+            return { status: 201, error: false, message: "Mid-term marks are successfully inserted", data: marks }
         } catch (error) {
             throw error
         }
