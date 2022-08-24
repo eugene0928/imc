@@ -1,7 +1,7 @@
 import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
 import { GroupTeacher, Mark } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { FinalMarkDto, MidTermDdto } from './dto';
+import { EditMarkDto, FinalMarkDto, MidTermDdto } from './dto';
 
 @Injectable()
 export class TeacherService {
@@ -106,6 +106,41 @@ export class TeacherService {
             })
             // return response
             return { status: 200, error: false, message: "Final term is marked", data: updatedMidTerm }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async editMarks(id: string, dto: EditMarkDto) {
+        try {
+            // get data from db
+            const mark = await this.prisma.mark.findFirst({ where: { id } })
+            // check if exits
+            if(!mark) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "The credential is not fount"
+                })
+            }
+            // check if dto exists
+            if(!(Object.keys(dto).length)) {
+                throw new BadRequestException({
+                    status: 400,
+                    error: true,
+                    message: "Mark is not received"
+                })
+            }
+            // update data
+            const updatedMark = await this.prisma.mark.update({ 
+                where: { id },
+                data: { 
+                    ...dto,
+                    total: dto.final_term && dto.mid_term ? (`${(+dto.final_term + +dto.mid_term) / 2}`) : !dto.final_term && dto.mid_term ? (`${(+mark.final_term + +dto.mid_term) / 2}`) : (`${(+dto.final_term + +mark.mid_term) / 2}`)
+                }
+            }) 
+            // return response
+            return {status: 200, error: false, message: "Mark is successfully updated", data: updatedMark}
         } catch (error) {
             throw error
         }

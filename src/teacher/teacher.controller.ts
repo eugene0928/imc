@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, ParseUUIDPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { TeacherJwtGuard } from 'src/auth/guard';
-import { FinalMarkDto, MidTermDdto } from './dto';
+import { EditMarkDto, FinalMarkDto, MidTermDdto } from './dto';
 import { TeacherService } from './teacher.service';
 
 @Controller('teacher')
@@ -38,9 +38,9 @@ export class TeacherController {
         return this.TeacherService.markFinalTerm(id, dto)
     }
 
-    @Patch("mark/edit/:term/:id/:subject")
+    @Patch("mark/edit/:id")
     @UseGuards(TeacherJwtGuard)
-    editMarks() {
-
+    editMarks(@Param("id", ParseUUIDPipe) id: string, @Body() dto: EditMarkDto) {
+        return this.TeacherService.editMarks(id, dto)
     }
 }
