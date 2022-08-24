@@ -197,7 +197,7 @@ model Mark {
   id            String              @id              @db.Uuid            @default(uuid())
   mid_term      String?                              @db.VarChar(1)
   final_term    String?                              @db.VarChar(1)
-  total         String?                              @db.VarChar(1)
+  total         String?                              @db.VarChar(3)
 
   created_at    DateTime                             @db.Date()          @default(now())
   updated_at    DateTime                             @updatedAt
