@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUUID, Matches } from "class-validator";
+import { IsNotEmpty, IsOptional, IsUUID, Matches } from "class-validator";
 
 export class MidTermDdto {
     @IsNotEmpty()
@@ -22,4 +22,14 @@ export class FinalMarkDto {
     @IsNotEmpty()
     @Matches(/^[1-5]{1}$/)
     final_term: string
+}
+
+export class EditMarkDto {
+    @IsOptional()
+    @Matches(/^[1-5]{1}$/)
+    mid_term?: string
+
+    @IsOptional()
+    @Matches(/^[1-5]{1}$/)
+    final_term?: string
 }
