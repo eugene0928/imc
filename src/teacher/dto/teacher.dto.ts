@@ -17,3 +17,9 @@ export class MidTermDdto {
     @Matches(/^[1-5]{1}$/)
     mid_term: string
 }
+
+export class FinalMarkDto {
+    @IsNotEmpty()
+    @Matches(/^[1-5]{1}$/)
+    final_term: string
+}
