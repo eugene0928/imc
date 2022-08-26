@@ -4,6 +4,7 @@ import { Request } from "express";
 import { AdminDto, EditAdminDto } from './dto';
 import { SuperJwtGuard } from 'src/auth/guard';
 import { SuperAdminService } from './super-admin.service';
+import { myStorage } from 'src/helper';
 
 @Controller('super-admin')
 export class SuperAdminController {    
@@ -18,7 +19,7 @@ export class SuperAdminController {
     @Post("add-admin")
     @UseGuards(SuperJwtGuard)
     @UseInterceptors(FileInterceptor("file", {
-        dest: "uploads/",
+        storage: myStorage
     }))
     async addAdmin(@Body() dto: AdminDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
         return this.superService.addAdmin(dto, file, req.user)

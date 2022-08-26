@@ -4,6 +4,7 @@ import { Request } from "express";
 import { AdminService } from './admin.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { EditStudentDto, editTeacherDto, editTeacherGroupDto, FacultyDto, GroupDto, newTeacherDto, SemesterDto, StudentDto, SubjectDto } from './dto';
+import { myStorage } from 'src/helper';
 
 @Controller('admin')
 export class AdminController {
@@ -18,7 +19,7 @@ export class AdminController {
     @Post("add-teacher")
     @UseGuards(AdminJwtGuard)
     @UseInterceptors(FileInterceptor("file", {
-        dest: "uploads/",
+        storage: myStorage
     }))
     async addTeacher(@Body() dto: newTeacherDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
         return this.adminService.addTeacher(dto, file, req.user)
@@ -69,7 +70,7 @@ export class AdminController {
     @Post("add-student")
     @UseGuards(AdminJwtGuard)
     @UseInterceptors(FileInterceptor("file", {
-        dest: "uploads/",
+        storage: myStorage
     }))
     addStudent(@Body() dto: StudentDto, @UploadedFile() file: Express.Multer.File) {
         return this.adminService.addStudent(dto, file)
