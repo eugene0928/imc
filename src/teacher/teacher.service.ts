@@ -1,11 +1,20 @@
 import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
-import { GroupTeacher, Mark } from '@prisma/client';
+import { GroupTeacher, Mark, Subject } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EditMarkDto, FinalMarkDto, MidTermDdto } from './dto';
 
 @Injectable()
 export class TeacherService {
     constructor(private prisma: PrismaService) {}
+
+    async getSubjects(teacher: any): Promise<{ status: number, error: boolean, message: string, data: Subject[] }> {
+        // get all related subjects of teacher
+        const subjects = await this.prisma.subject.findMany({ 
+            include: { teachers: { where: { id: teacher.id } } }
+        })
+        // return response
+        return { status: 200, error: false, message: "All related subjects", data: subjects }
+    }
 
     async getGroups(teacher: any): Promise<{ status: number, error: boolean, message: string, data: GroupTeacher[] }> {
         try {

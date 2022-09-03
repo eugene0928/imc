@@ -14,6 +14,12 @@ export class TeacherController {
         return { status: 200, error: false, message: "Teacher's info", data: req.user }
     }
 
+    @Get("subjects")
+    @UseGuards(TeacherJwtGuard)
+    getSubjects(@Req() req: Request) {
+        return this.TeacherService.getSubjects(req.user)
+    }
+
     @Get("groups")
     @UseGuards(TeacherJwtGuard)
     getGroups(@Req() req: Request) {
