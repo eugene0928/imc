@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger"
 import { IsDate, IsEmail, IsISO8601, IsNotEmpty, IsNotEmptyObject, IsOptional, IsPhoneNumber, IsUUID, Length, Matches } from "class-validator"
 
 export class newTeacherDto {
@@ -24,7 +25,8 @@ export class newTeacherDto {
     @Length(3, 255)
     password: string
 
-    file: File
+    @ApiProperty({ type: 'string', format: 'binary', name: 'file' })
+    file: Express.Multer.File
 
     @IsOptional()
     @Matches(/^(male)$|^(female)$/)
@@ -103,7 +105,7 @@ export class FacultyDto {
     name: string
 }
 
-export class StudentDto {
+export class CreateStudentDto {
     @IsNotEmpty()
     login: string
 
@@ -119,7 +121,8 @@ export class StudentDto {
     @IsUUID()
     group_id: string
 
-    file: File
+    @ApiProperty({ type: 'string', format: 'binary' }) 
+    file: Express.Multer.File
 }
 
 export class EditStudentDto {

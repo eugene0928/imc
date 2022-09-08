@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, Length, Matches } from "class-validator";
 
 export class AdminDto {
@@ -24,7 +25,8 @@ export class AdminDto {
   @IsPhoneNumber('UZ')
   phone_number: string;
 
-  file: File;
+  @ApiProperty({ type: 'string', format: 'binary' })
+  file: Express.Multer.File;
 
   gender?: string;
 }

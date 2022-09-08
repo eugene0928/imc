@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Student } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StudentDto } from './dto';
 
@@ -22,10 +23,10 @@ export class StudentService {
         }
     }
 
-    async fillForm(id: string, dto: StudentDto) {
+    async fillForm(pupil: any, dto: StudentDto) {
         try {
             // get student from db
-            const student = await this.prisma.student.findFirst({ where: { id, deleted_at: null } })
+            const student = await this.prisma.student.findFirst({ where: { id: pupil.id, deleted_at: null } })
             // check if exists
             if(!student) {
                 throw new BadRequestException({
@@ -44,7 +45,7 @@ export class StudentService {
             }
             // update record
             const updatedStudent = await this.prisma.student.update({
-                where: { id },
+                where: { id: pupil.id },
                 data: {
                     name: dto.name,
                     surname: dto.surname,
@@ -77,10 +78,10 @@ export class StudentService {
         }
     }
     
-    async getMark(id: string) {
+    async getMark(student: any) {
         try {
             // get all mark from db
-            let marks = await this.prisma.mark.findMany({ where: { student_id: id, deleted_at: null }, include: { subject: true, semester: true,  student: true } })
+            let marks = await this.prisma.mark.findMany({ where: { student_id: student.id, deleted_at: null }, include: { subject: true, semester: true,  student: true } })
             // check if exists
             if(!marks.length) {
                 throw new BadRequestException({
