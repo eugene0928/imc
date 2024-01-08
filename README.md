@@ -1,15 +1,17 @@
 ## IMC project
 
 ### Prerequisites 
-- Nodejs: <= 20.0
+- Nodejs: >= 20.0
 - Postgres: 14.9
+
+### Pacakage manager is `YARN`
 
 
 ## Installation
 
 ### Intall dependencies
 ```bash
-npm install
+yarn install
 ```
 
 ### Create `.env` file for credentials
@@ -21,16 +23,16 @@ touch .env
 
 ### Run on watch mode
 ```bash
-npm run start:dev
+yarn run start:dev
 ```
 
 
 ### Run project
 ```bash
-npm start
+yarn start
 ```
 
 ### Run unit tests
 ```bash
-npm run test
+yarn run test
 ```

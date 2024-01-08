@@ -49,7 +49,7 @@ describe('AdminController', () => {
     const dto = { teacher_id: 'id', group_id: 'id' };
 
     expect(await controller.addGroupTeacher(dto)).toEqual({
-      status: 200,
+      status: 201,
       error: false,
       message: 'success',
       data: {},
@@ -62,7 +62,7 @@ describe('AdminController', () => {
     expect(await controller.editTeacherGroup('1', 'a', dto)).toEqual({
       status: 200,
       error: false,
-      message: 'updated',
+      message: 'update',
       data: {},
     });
   });
